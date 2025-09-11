@@ -1,2 +1,2 @@
 # Ultrain To - Do
-Its just To-Do
+Its just a random To-Do app
