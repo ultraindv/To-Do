@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const addListButton = document.getElementById('add-list-button');
     const listMenu = document.getElementById('list-menu');
 
+    // Safety check: stop cleanly if HTML IDs don't match
+    if (!todoList || !todoForm || !todoInput || !addListButton || !listMenu) {
+        console.error('Missing required HTML elements:', { todoList, todoForm, todoInput, addListButton, listMenu });
+        return;
+    }
+
     function setCookie(name, value, days) {
         const d = new Date();
         d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
@@ -27,9 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
         return null;
     }
 
-    let lists = getCookie('lists') || { 'Main Tasks': [] };
-    let currentList = getCookie('currentList') || 'Main Tasks';
-    if (!lists[currentList]) currentList = 'Main Tasks';
+    // Self-healing state loader (prevents corrupted cookies from crashing JS)
+    let lists = getCookie('lists');
+    if (!lists || typeof lists !== 'object' || Array.isArray(lists) || Object.keys(lists).length === 0) {
+        lists = { 'Main Tasks': [] };
+        setCookie('lists', lists, 30);
+    }
+
+    let currentList = getCookie('currentList');
+    if (typeof currentList !== 'string' || !Array.isArray(lists[currentList])) {
+        currentList = Object.keys(lists);
+        if (!Array.isArray(lists[currentList])) {
+            lists[currentList] = [];
+        }
+        setCookie('currentList', currentList, 30);
+    }
 
     function renderLists() {
         listMenu.innerHTML = '';
@@ -45,14 +63,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const deleteBtn = document.createElement('button');
                 deleteBtn.type = 'button';
                 deleteBtn.textContent = '×';
-                deleteBtn.title = 'Delete list';
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     delete lists[listName];
                     setCookie('lists', lists, 30);
                     if (currentList === listName) {
-                        currentList = 'Main Tasks';
+                        currentList = Object.keys(lists) || 'Main Tasks';
+                        if (!lists[currentList]) lists[currentList] = [];
                         setCookie('currentList', currentList, 30);
                     }
                     renderLists();
@@ -74,10 +92,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function renderTasks() {
         todoList.innerHTML = '';
-        const tasks = lists[currentList] || [];
+        const tasks = Array.isArray(lists[currentList]) ? lists[currentList] : [];
 
         tasks.forEach((taskItem, index) => {
-            // Support both old string cookies and new { text, done } objects
             const taskObj = typeof taskItem === 'string'
                 ? { text: taskItem, done: false }
                 : taskItem;
@@ -91,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
-            checkbox.checked = taskObj.done;
+            checkbox.checked = Boolean(taskObj.done);
             checkbox.addEventListener('change', function () {
                 taskObj.done = checkbox.checked;
                 li.classList.toggle('task-done', taskObj.done);
@@ -124,6 +141,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const taskText = todoInput.value.trim();
         if (taskText !== '' && currentList) {
+            if (!Array.isArray(lists[currentList])) lists[currentList] = [];
             lists[currentList].push({ text: taskText, done: false });
             setCookie('lists', lists, 30);
             todoInput.value = '';
