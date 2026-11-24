@@ -1,55 +1,52 @@
 @import url('https://googleapis.com');
 
-:root {
-    --ai-purple: #7c3aed;
-    --ai-cyan: #06b6d4;
-    --ai-green: #90EE90;
-    --bg-dark: #090d16;
-    --glass-bg: rgba(22, 27, 42, 0.78);
-    --glass-border: rgba(144, 238, 144, 0.25);
-}
-
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Fira Sans', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 24px;
     display: flex;
-    flex-direction: column;
     min-height: 100vh;
-    color: #f8fafc;
-    background:
-        radial-gradient(circle at 15% 20%, rgba(124, 58, 237, 0.28), transparent 40%),
-        radial-gradient(circle at 85% 80%, rgba(6, 182, 212, 0.25), transparent 40%),
-        var(--bg-dark);
+    color: #ffffff;
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #064e3b);
+    background-size: 400% 400%;
+    animation: gradientShift 12s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .container {
     flex: 1;
     display: flex;
-    gap: 16px;
-    padding: 16px;
-    max-width: 1200px;
+    gap: 24px;
+    max-width: 1100px;
     width: 100%;
-    margin: 0 auto;
+    margin: auto;
 }
 
-/* Unified Sidebar (Fixes the old .sidebar vs .menu-bar conflict & 200px gap!) */
+/* Over-designed Glass Sidebar */
 .sidebar, .menu-bar {
-    width: 240px;
+    width: 260px;
     flex-shrink: 0;
-    background: var(--glass-bg);
-    backdrop-filter: blur(14px);
-    border: 1px solid var(--glass-border);
-    border-radius: 14px;
-    padding: 16px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 28px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 0 25px rgba(124, 58, 237, 0.2);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25);
 }
 
 .sidebar ul, .menu-bar ul {
@@ -58,153 +55,158 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .sidebar ul li, .menu-bar ul li {
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.05);
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    border-radius: 18px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.2s ease;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .sidebar ul li:hover, .menu-bar ul li:hover {
-    background: linear-gradient(135deg, rgba(124, 58, 237, 0.35), rgba(144, 238, 144, 0.2));
-    border-color: var(--ai-green);
-    transform: translateX(3px);
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
 }
 
-/* Main Neural Workspace */
+/* Main Floating Card */
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: var(--glass-bg);
-    backdrop-filter: blur(14px);
-    border: 1px solid var(--glass-border);
-    border-radius: 14px;
-    padding: 20px;
-    box-shadow: 0 0 35px rgba(6, 182, 212, 0.15);
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.6),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25);
     overflow: hidden;
 }
 
 #todo-list {
     flex: 1;
     margin: 0;
-    padding: 8px 0;
+    padding: 8px 4px;
     list-style: none;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 
 #todo-list li {
-    background: rgba(15, 23, 42, 0.85);
-    padding: 14px 16px;
-    border: 1px solid rgba(124, 58, 237, 0.4);
-    border-left: 4px solid var(--ai-green);
-    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    font-weight: 600;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    animation: neuralPop 0.25s ease-out;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    gap: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    animation: bounceIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 #todo-list li:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 18px rgba(144, 238, 144, 0.2);
+    transform: translateY(-4px) scale(1.01);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
 }
 
-@keyframes neuralPop {
-    from { opacity: 0; transform: translateY(6px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.9) translateY(12px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* Prompt Input Bar */
+/* Pill Input Bar */
 #todo-form {
     display: flex;
-    padding-top: 14px;
-    gap: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 #todo-input {
     flex: 1;
-    padding: 12px 16px;
-    border-radius: 10px;
-    border: 1px solid rgba(124, 58, 237, 0.5);
-    background: rgba(9, 13, 22, 0.9);
+    padding: 14px 22px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.35);
     color: #ffffff;
     font-family: inherit;
+    font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.25s ease;
 }
 
 #todo-input:focus {
-    border-color: var(--ai-green);
-    box-shadow: 0 0 14px rgba(144, 238, 144, 0.35);
+    border-color: #a855f7;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25);
 }
 
-/* Glowing AI Gradient Buttons */
-#todo-form button, #add-list-button, #ai-synergize-btn {
-    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+/* Over-the-Top Gradient Pill Buttons */
+#todo-form button, #add-list-button {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
+    background-size: 200% 200%;
     color: #ffffff;
-    font-weight: 700;
+    font-weight: 800;
     font-family: inherit;
     border: none;
-    border-radius: 10px;
-    padding: 12px 18px;
+    border-radius: 999px;
+    padding: 14px 24px;
     cursor: pointer;
-    box-shadow: 0 0 15px rgba(124, 58, 237, 0.45);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.6);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-#todo-form button:hover, #add-list-button:hover, #ai-synergize-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 22px rgba(144, 238, 144, 0.6);
+#todo-form button:hover, #add-list-button:hover {
+    background-position: right center;
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 16px 32px -4px rgba(236, 72, 153, 0.65);
 }
 
 #add-list-button {
     width: 100%;
-    margin-top: 16px;
+    margin-top: 20px;
 }
 
-/* Purge / Decommission Buttons */
+/* Glossy Pill Delete Button */
 .delete-btn {
-    background: rgba(239, 68, 68, 0.2);
-    color: #fca5a5;
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    border-radius: 8px;
-    padding: 6px 12px;
+    background: linear-gradient(135deg, #fb7185, #e11d48);
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 0.8rem;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.15s ease;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .delete-btn:hover {
-    background: #ef4444;
-    color: #ffffff;
-    box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+    transform: scale(1.08);
+    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.7);
 }
 
-/* Mobile Responsive Collapse */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    .sidebar, .menu-bar {
-        width: 100%;
-    }
-}
-{
-    background-color: #cc0000;
+    body { padding: 12px; }
+    .container { flex-direction: column; }
+    .sidebar, .menu-bar { width: 100%; }
 }
