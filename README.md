@@ -1,2 +1,2 @@
-# Ultrain To - Do
-Its just a random To-Do app that is also ai-slop
+# Slop To - Do
+A sloppy Task Manager that is entirely vibe-coded
