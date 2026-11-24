@@ -1,212 +1,271 @@
 @import url('https://googleapis.com');
 
+:root {
+    /* Dark Mode (Default) */
+    --bg-page: #0d1117;
+    --bg-panel: #161b22;
+    --bg-item: #21262d;
+    --bg-item-hover: #30363d;
+    --text-main: #f0f6fc;
+    --text-muted: #8b949e;
+    --border-color: #30363d;
+    --accent: #238636;
+    --accent-hover: #2ea043;
+    --active-bg: rgba(144, 238, 144, 0.15);
+    --active-border: #90EE90;
+    --danger: #da3633;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --bg-page: #f6f8fa;
+        --bg-panel: #ffffff;
+        --bg-item: #f6f8fa;
+        --bg-item-hover: #eaeef2;
+        --text-main: #1f2328;
+        --text-muted: #656d76;
+        --border-color: #d0d7de;
+        --accent: #1a7f37;
+        --accent-hover: #116329;
+        --active-bg: rgba(26, 127, 55, 0.12);
+        --active-border: #1a7f37;
+    }
+}
+
 * {
     box-sizing: border-box;
 }
 
 body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-family: 'Fira Sans', sans-serif;
     margin: 0;
-    padding: 24px;
+    padding: 20px;
     display: flex;
-    min-height: 100vh;
-    color: #ffffff;
-    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #064e3b);
-    background-size: 400% 400%;
-    animation: gradientShift 12s ease infinite;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    height: 100dvh;
+    background-color: var(--bg-page);
+    color: var(--text-main);
 }
 
 .container {
     flex: 1;
     display: flex;
-    gap: 24px;
-    max-width: 1100px;
+    gap: 20px;
+    max-width: 1050px;
     width: 100%;
-    margin: auto;
+    margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
 }
 
-/* Over-designed Glass Sidebar */
+/* Fixed, Scrollable Sidebar List Bar */
 .sidebar, .menu-bar {
-    width: 260px;
+    width: 250px;
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 28px;
-    padding: 24px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.6),
-        inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    gap: 12px;
+    overflow: hidden;
 }
 
-.sidebar ul, .menu-bar ul {
+#list-menu {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
+    overflow-y: auto;
+    flex: 1;
 }
 
-.sidebar ul li, .menu-bar ul li {
-    padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 18px;
-    font-weight: 600;
+#list-menu li {
+    padding: 10px 12px;
+    background-color: var(--bg-item);
+    border: 1px solid transparent;
+    border-radius: 8px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    gap: 8px;
+    font-weight: 500;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.sidebar ul li:hover, .menu-bar ul li:hover {
-    background: rgba(255, 255, 255, 0.16);
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+#list-menu li:hover {
+    background-color: var(--bg-item-hover);
 }
 
-/* Main Floating Card */
+#list-menu li.active-list {
+    background-color: var(--active-bg);
+    border-color: var(--active-border);
+    font-weight: 600;
+}
+
+#list-menu li span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#add-list-button {
+    width: 100%;
+    padding: 10px 14px;
+    background-color: var(--accent);
+    color: #ffffff;
+    font-family: inherit;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+#add-list-button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Main Task Panel */
 .content {
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: rgba(255, 255, 255, 0.07);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 28px;
-    padding: 28px;
-    box-shadow:
-        0 25px 50px -12px rgba(0, 0, 0, 0.6),
-        inset 0 1px 1px rgba(255, 255, 255, 0.25);
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     overflow: hidden;
 }
 
 #todo-list {
     flex: 1;
     margin: 0;
-    padding: 8px 4px;
+    padding: 20px;
     list-style: none;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 10px;
 }
 
 #todo-list li {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
-    padding: 16px 20px;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 20px;
-    font-weight: 600;
+    background-color: var(--bg-item);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    animation: bounceIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    gap: 12px;
 }
 
-#todo-list li:hover {
-    transform: translateY(-4px) scale(1.01);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+.task-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    cursor: pointer;
 }
 
-@keyframes bounceIn {
-    0% { opacity: 0; transform: scale(0.9) translateY(12px); }
-    100% { opacity: 1; transform: scale(1) translateY(0); }
+.task-left input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
 }
 
-/* Pill Input Bar */
+.task-done span {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+
+/* Bottom Task Input Bar */
 #todo-form {
     display: flex;
-    padding-top: 20px;
-    gap: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 16px;
+    gap: 10px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-panel);
 }
 
 #todo-input {
     flex: 1;
-    padding: 14px 22px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.35);
-    color: #ffffff;
+    padding: 10px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-page);
+    color: var(--text-main);
     font-family: inherit;
     font-size: 0.95rem;
     outline: none;
-    transition: all 0.25s ease;
 }
 
 #todo-input:focus {
-    border-color: #a855f7;
-    background: rgba(0, 0, 0, 0.5);
-    box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25);
+    border-color: var(--active-border);
 }
 
-/* Over-the-Top Gradient Pill Buttons */
-#todo-form button, #add-list-button {
-    background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6);
-    background-size: 200% 200%;
+#todo-form button {
+    background-color: var(--accent);
     color: #ffffff;
-    font-weight: 800;
     font-family: inherit;
+    font-weight: 600;
     border: none;
-    border-radius: 999px;
-    padding: 14px 24px;
+    border-radius: 8px;
+    padding: 10px 20px;
     cursor: pointer;
-    box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.6);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: background-color 0.15s ease;
 }
 
-#todo-form button:hover, #add-list-button:hover {
-    background-position: right center;
-    transform: translateY(-3px) scale(1.04);
-    box-shadow: 0 16px 32px -4px rgba(236, 72, 153, 0.65);
+#todo-form button:hover {
+    background-color: var(--accent-hover);
 }
 
-#add-list-button {
-    width: 100%;
-    margin-top: 20px;
-}
-
-/* Glossy Pill Delete Button */
+/* Delete Button */
 .delete-btn {
-    background: linear-gradient(135deg, #fb7185, #e11d48);
-    color: #ffffff;
-    border: none;
-    border-radius: 999px;
-    padding: 8px 16px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 4px 10px;
     font-family: inherit;
-    font-weight: 700;
     font-size: 0.8rem;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.4);
-    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.15s ease;
 }
 
 .delete-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.7);
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: #ffffff;
 }
 
+/* Mobile Responsive Layout */
 @media (max-width: 768px) {
-    body { padding: 12px; }
-    .container { flex-direction: column; }
-    .sidebar, .menu-bar { width: 100%; }
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar, .menu-bar {
+        width: 100%;
+        max-height: 170px;
+    }
+
+    #list-menu {
+        flex-direction: row;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    #list-menu li {
+        flex-shrink: 0;
+    }
 }
