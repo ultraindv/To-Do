@@ -22,17 +22,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     let lists = loadData('ultrain_todo_lists');
-    if (!lists || typeof lists !== 'object' || Array.isArray(lists) || Object.keys(lists).length === 0) {
+    if (!lists || typeof lists !== 'object' || Array.isArray(lists)) {
         lists = { 'Main Tasks': [] };
         saveData('ultrain_todo_lists', lists);
     }
 
+    if (!Array.isArray(lists['Main Tasks'])) {
+        lists['Main Tasks'] = [];
+    }
+
     let currentList = loadData('ultrain_todo_current');
     if (typeof currentList !== 'string' || !Array.isArray(lists[currentList])) {
-        currentList = Object.keys(lists)[0];
-        if (!Array.isArray(lists[currentList])) {
-            lists[currentList] = [];
-        }
+        currentList = 'Main Tasks';
         saveData('ultrain_todo_current', currentList);
     }
 
@@ -56,8 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     delete lists[listName];
                     saveData('ultrain_todo_lists', lists);
                     if (currentList === listName) {
-                        currentList = Object.keys(lists)[0] || 'Main Tasks';
-                        if (!lists[currentList]) lists[currentList] = [];
+                        currentList = 'Main Tasks';
                         saveData('ultrain_todo_current', currentList);
                     }
                     renderLists();
@@ -151,12 +151,5 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     renderLists();
-    renderTasks();
-});
-
-
-
-
-    Object.keys(lists).forEach(listName => addList(listName));
     renderTasks();
 });
