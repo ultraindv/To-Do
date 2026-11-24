@@ -5,48 +5,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const addListButton = document.getElementById('add-list-button');
     const listMenu = document.getElementById('list-menu');
 
-    // Safety check: stop cleanly if HTML IDs don't match
-    if (!todoList || !todoForm || !todoInput || !addListButton || !listMenu) {
-        console.error('Missing required HTML elements:', { todoList, todoForm, todoInput, addListButton, listMenu });
-        return;
-    }
-
-    function setCookie(name, value, days) {
-        const d = new Date();
-        d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-        document.cookie = `${name}=${encodeURIComponent(JSON.stringify(value))};expires=${d.toUTCString()};path=/;SameSite=Lax`;
-    }
-
-    function getCookie(name) {
-        const nameEQ = name + '=';
-        const ca = document.cookie.split(';');
-        for (let i = 0; i < ca.length; i++) {
-            let c = ca[i].trim();
-            if (c.indexOf(nameEQ) === 0) {
-                try {
-                    return JSON.parse(decodeURIComponent(c.substring(nameEQ.length)));
-                } catch (e) {
-                    return null;
-                }
-            }
+    function saveData(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            // Fallback if storage is restricted
         }
-        return null;
     }
 
-    // Self-healing state loader (prevents corrupted cookies from crashing JS)
-    let lists = getCookie('lists');
+    function loadData(key) {
+        try {
+            return JSON.parse(localStorage.getItem(key));
+        } catch (e) {
+            return null;
+        }
+    }
+
+    let lists = loadData('ultrain_todo_lists');
     if (!lists || typeof lists !== 'object' || Array.isArray(lists) || Object.keys(lists).length === 0) {
         lists = { 'Main Tasks': [] };
-        setCookie('lists', lists, 30);
+        saveData('ultrain_todo_lists', lists);
     }
 
-    let currentList = getCookie('currentList');
+    let currentList = loadData('ultrain_todo_current');
     if (typeof currentList !== 'string' || !Array.isArray(lists[currentList])) {
-        currentList = Object.keys(lists);
+        currentList = Object.keys(lists)[0];
         if (!Array.isArray(lists[currentList])) {
             lists[currentList] = [];
         }
-        setCookie('currentList', currentList, 30);
+        saveData('ultrain_todo_current', currentList);
     }
 
     function renderLists() {
@@ -67,11 +54,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 deleteBtn.addEventListener('click', function (e) {
                     e.stopPropagation();
                     delete lists[listName];
-                    setCookie('lists', lists, 30);
+                    saveData('ultrain_todo_lists', lists);
                     if (currentList === listName) {
-                        currentList = Object.keys(lists) || 'Main Tasks';
+                        currentList = Object.keys(lists)[0] || 'Main Tasks';
                         if (!lists[currentList]) lists[currentList] = [];
-                        setCookie('currentList', currentList, 30);
+                        saveData('ultrain_todo_current', currentList);
                     }
                     renderLists();
                     renderTasks();
@@ -81,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             li.addEventListener('click', function () {
                 currentList = listName;
-                setCookie('currentList', currentList, 30);
+                saveData('ultrain_todo_current', currentList);
                 renderLists();
                 renderTasks();
             });
@@ -112,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function () {
             checkbox.addEventListener('change', function () {
                 taskObj.done = checkbox.checked;
                 li.classList.toggle('task-done', taskObj.done);
-                setCookie('lists', lists, 30);
+                saveData('ultrain_todo_lists', lists);
             });
 
             const span = document.createElement('span');
@@ -128,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
             deleteBtn.className = 'delete-btn';
             deleteBtn.addEventListener('click', function () {
                 lists[currentList].splice(index, 1);
-                setCookie('lists', lists, 30);
+                saveData('ultrain_todo_lists', lists);
                 renderTasks();
             });
 
@@ -143,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (taskText !== '' && currentList) {
             if (!Array.isArray(lists[currentList])) lists[currentList] = [];
             lists[currentList].push({ text: taskText, done: false });
-            setCookie('lists', lists, 30);
+            saveData('ultrain_todo_lists', lists);
             todoInput.value = '';
             renderTasks();
         }
@@ -156,8 +143,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (listName && !lists[listName]) {
             lists[listName] = [];
             currentList = listName;
-            setCookie('lists', lists, 30);
-            setCookie('currentList', currentList, 30);
+            saveData('ultrain_todo_lists', lists);
+            saveData('ultrain_todo_current', currentList);
             renderLists();
             renderTasks();
         }
@@ -166,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     renderLists();
     renderTasks();
 });
+
 
 
 
